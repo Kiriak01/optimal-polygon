@@ -17,6 +17,8 @@
 #include <CGAL/Origin.h>
 
 
+
+
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef CGAL::Polygon_2<Kernel> Polygon_2;
 typedef Kernel::Point_2 Point_2;
@@ -33,6 +35,9 @@ typedef CGAL::Polygon_2<K> Polygon_2;
 typedef std::vector<Point_2> Points;
 using std::cout; using std::endl;
 
-void getargv(std::vector<char*>&); 
+Segment_2 findPriorEdge(Point_2,Polygon_2); 
+Segment_2 findNextEdge(Point_2,Polygon_2); 
+void printPolygonEdges(Polygon_2); 
+
 
 
