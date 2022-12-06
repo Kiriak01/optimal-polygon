@@ -38,6 +38,6 @@ using std::cout; using std::endl;
 Segment_2 findPriorEdge(Point_2,Polygon_2); 
 Segment_2 findNextEdge(Point_2,Polygon_2); 
 void printPolygonEdges(Polygon_2); 
-
+bool PathIsFeasible(Polygon_2,Point_2,Point_2,int,int,int,int); 
 
 

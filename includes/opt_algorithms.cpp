@@ -35,3 +35,20 @@ void printPolygonEdges(Polygon_2 polygon){
         cout << edge << endl; 
     }
 }
+
+bool PathIsFeasible(Polygon_2 initialPolygon,Point_2 v3, Point_2 v1,int v3It,int v1It, int eSourceIt,int eTargetIt) {
+    // cout << "moving " << v3 << "inside e " << endl; 
+    // for (int i = 0; i < path.size(); i++) {
+    //     // vertex_iterator = findIterator()
+    // }
+    // initialPolygon.erase(initialPolygon.begin() + v3It);
+    // initialPolygon.insert(initialPolygon.begin() + eSourceIt , v3);
+    // initialPolygon.erase(initialPolygon.begin() + v1It);
+    // initialPolygon.insert(initialPolygon.begin() + eSourceIt, v1);
+    // cout << "moving path to edge makes polygon :" << endl; 
+    // printPolygonEdges(initialPolygon); 
+    // if (initialPolygon.is_simple()) {
+    //     return true;
+    // }
+    // return false; 
+}
