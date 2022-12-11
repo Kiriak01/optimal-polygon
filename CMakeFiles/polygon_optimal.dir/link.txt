@@ -1,0 +1,1 @@
+/usr/bin/c++     CMakeFiles/polygon_optimal.dir/main.cpp.o  -o polygon_optimal  includes/libopt_algorithms.a -lpolygon1 /usr/lib/x86_64-linux-gnu/libgmpxx.so /usr/lib/x86_64-linux-gnu/libmpfr.so /usr/lib/x86_64-linux-gnu/libgmp.so -pthread 

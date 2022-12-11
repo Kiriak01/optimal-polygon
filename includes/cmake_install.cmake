@@ -1,4 +1,4 @@
-# Install script for directory: /home/george/Desktop/optimal-algo/includes
+# Install script for directory: /mnt/c/Users/dimit/Downloads/optimal-polygon/includes
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

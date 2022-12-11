@@ -3,7 +3,7 @@
 
 cmake_minimum_required(VERSION 3.1...3.23)
 
-project( polygon_op )
+project( polygon )
 
 
 # CGAL and its components
@@ -33,13 +33,13 @@ endif()
 # include for local package
 
 
-# Creating entries for target: polygon_op
+# Creating entries for target: polygon
 # ############################
 
-add_executable( polygon_op  main.cpp )
+add_executable( polygon  main.cpp )
 
-add_to_cached_list( CGAL_EXECUTABLE_TARGETS polygon_op )
+add_to_cached_list( CGAL_EXECUTABLE_TARGETS polygon )
 
 # Link the executable to CGAL and third-party libraries
-target_link_libraries(polygon_op PRIVATE CGAL::CGAL )
+target_link_libraries(polygon PRIVATE CGAL::CGAL )
 

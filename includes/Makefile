@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/george/Desktop/optimal-algo
+CMAKE_SOURCE_DIR = /mnt/c/Users/dimit/Downloads/optimal-polygon
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/george/Desktop/optimal-algo
+CMAKE_BINARY_DIR = /mnt/c/Users/dimit/Downloads/optimal-polygon
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -69,8 +69,8 @@ rebuild_cache/fast: rebuild_cache
 
 # Special rule for the target edit_cache
 edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
+	/usr/bin/cmake-gui -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -80,14 +80,14 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd /home/george/Desktop/optimal-algo && $(CMAKE_COMMAND) -E cmake_progress_start /home/george/Desktop/optimal-algo/CMakeFiles /home/george/Desktop/optimal-algo/includes/CMakeFiles/progress.marks
-	cd /home/george/Desktop/optimal-algo && $(MAKE) -f CMakeFiles/Makefile2 includes/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/george/Desktop/optimal-algo/CMakeFiles 0
+	cd /mnt/c/Users/dimit/Downloads/optimal-polygon && $(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/dimit/Downloads/optimal-polygon/CMakeFiles /mnt/c/Users/dimit/Downloads/optimal-polygon/includes/CMakeFiles/progress.marks
+	cd /mnt/c/Users/dimit/Downloads/optimal-polygon && $(MAKE) -f CMakeFiles/Makefile2 includes/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/dimit/Downloads/optimal-polygon/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /home/george/Desktop/optimal-algo && $(MAKE) -f CMakeFiles/Makefile2 includes/clean
+	cd /mnt/c/Users/dimit/Downloads/optimal-polygon && $(MAKE) -f CMakeFiles/Makefile2 includes/clean
 .PHONY : clean
 
 # The main clean target
@@ -97,22 +97,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /home/george/Desktop/optimal-algo && $(MAKE) -f CMakeFiles/Makefile2 includes/preinstall
+	cd /mnt/c/Users/dimit/Downloads/optimal-polygon && $(MAKE) -f CMakeFiles/Makefile2 includes/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /home/george/Desktop/optimal-algo && $(MAKE) -f CMakeFiles/Makefile2 includes/preinstall
+	cd /mnt/c/Users/dimit/Downloads/optimal-polygon && $(MAKE) -f CMakeFiles/Makefile2 includes/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /home/george/Desktop/optimal-algo && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /mnt/c/Users/dimit/Downloads/optimal-polygon && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 includes/CMakeFiles/opt_algorithms.dir/rule:
-	cd /home/george/Desktop/optimal-algo && $(MAKE) -f CMakeFiles/Makefile2 includes/CMakeFiles/opt_algorithms.dir/rule
+	cd /mnt/c/Users/dimit/Downloads/optimal-polygon && $(MAKE) -f CMakeFiles/Makefile2 includes/CMakeFiles/opt_algorithms.dir/rule
 .PHONY : includes/CMakeFiles/opt_algorithms.dir/rule
 
 # Convenience name for target.
@@ -122,7 +122,7 @@ opt_algorithms: includes/CMakeFiles/opt_algorithms.dir/rule
 
 # fast build rule for target.
 opt_algorithms/fast:
-	cd /home/george/Desktop/optimal-algo && $(MAKE) -f includes/CMakeFiles/opt_algorithms.dir/build.make includes/CMakeFiles/opt_algorithms.dir/build
+	cd /mnt/c/Users/dimit/Downloads/optimal-polygon && $(MAKE) -f includes/CMakeFiles/opt_algorithms.dir/build.make includes/CMakeFiles/opt_algorithms.dir/build
 .PHONY : opt_algorithms/fast
 
 opt_algorithms.o: opt_algorithms.cpp.o
@@ -131,7 +131,7 @@ opt_algorithms.o: opt_algorithms.cpp.o
 
 # target to build an object file
 opt_algorithms.cpp.o:
-	cd /home/george/Desktop/optimal-algo && $(MAKE) -f includes/CMakeFiles/opt_algorithms.dir/build.make includes/CMakeFiles/opt_algorithms.dir/opt_algorithms.cpp.o
+	cd /mnt/c/Users/dimit/Downloads/optimal-polygon && $(MAKE) -f includes/CMakeFiles/opt_algorithms.dir/build.make includes/CMakeFiles/opt_algorithms.dir/opt_algorithms.cpp.o
 .PHONY : opt_algorithms.cpp.o
 
 opt_algorithms.i: opt_algorithms.cpp.i
@@ -140,7 +140,7 @@ opt_algorithms.i: opt_algorithms.cpp.i
 
 # target to preprocess a source file
 opt_algorithms.cpp.i:
-	cd /home/george/Desktop/optimal-algo && $(MAKE) -f includes/CMakeFiles/opt_algorithms.dir/build.make includes/CMakeFiles/opt_algorithms.dir/opt_algorithms.cpp.i
+	cd /mnt/c/Users/dimit/Downloads/optimal-polygon && $(MAKE) -f includes/CMakeFiles/opt_algorithms.dir/build.make includes/CMakeFiles/opt_algorithms.dir/opt_algorithms.cpp.i
 .PHONY : opt_algorithms.cpp.i
 
 opt_algorithms.s: opt_algorithms.cpp.s
@@ -149,7 +149,7 @@ opt_algorithms.s: opt_algorithms.cpp.s
 
 # target to generate assembly for a file
 opt_algorithms.cpp.s:
-	cd /home/george/Desktop/optimal-algo && $(MAKE) -f includes/CMakeFiles/opt_algorithms.dir/build.make includes/CMakeFiles/opt_algorithms.dir/opt_algorithms.cpp.s
+	cd /mnt/c/Users/dimit/Downloads/optimal-polygon && $(MAKE) -f includes/CMakeFiles/opt_algorithms.dir/build.make includes/CMakeFiles/opt_algorithms.dir/opt_algorithms.cpp.s
 .PHONY : opt_algorithms.cpp.s
 
 # Help Target
@@ -175,6 +175,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /home/george/Desktop/optimal-algo && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /mnt/c/Users/dimit/Downloads/optimal-polygon && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

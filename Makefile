@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/george/Desktop/optimal-algo
+CMAKE_SOURCE_DIR = /mnt/c/Users/dimit/Downloads/optimal-polygon
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/george/Desktop/optimal-algo
+CMAKE_BINARY_DIR = /mnt/c/Users/dimit/Downloads/optimal-polygon
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -69,8 +69,8 @@ rebuild_cache/fast: rebuild_cache
 
 # Special rule for the target edit_cache
 edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
+	/usr/bin/cmake-gui -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -80,9 +80,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/george/Desktop/optimal-algo/CMakeFiles /home/george/Desktop/optimal-algo/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/dimit/Downloads/optimal-polygon/CMakeFiles /mnt/c/Users/dimit/Downloads/optimal-polygon/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/george/Desktop/optimal-algo/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/dimit/Downloads/optimal-polygon/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -111,69 +111,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named optimal_polygon
+# Target rules for targets named polygon_op
 
 # Build rule for target.
-optimal_polygon: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 optimal_polygon
-.PHONY : optimal_polygon
+polygon_op: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 polygon_op
+.PHONY : polygon_op
 
 # fast build rule for target.
-optimal_polygon/fast:
-	$(MAKE) -f CMakeFiles/optimal_polygon.dir/build.make CMakeFiles/optimal_polygon.dir/build
-.PHONY : optimal_polygon/fast
-
-#=============================================================================
-# Target rules for targets named opt_algorithms
-
-# Build rule for target.
-opt_algorithms: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 opt_algorithms
-.PHONY : opt_algorithms
-
-# fast build rule for target.
-opt_algorithms/fast:
-	$(MAKE) -f includes/CMakeFiles/opt_algorithms.dir/build.make includes/CMakeFiles/opt_algorithms.dir/build
-.PHONY : opt_algorithms/fast
-
-#=============================================================================
-# Target rules for targets named polygon
-
-# Build rule for target.
-polygon: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 polygon
-.PHONY : polygon
-
-# fast build rule for target.
-polygon/fast:
-	$(MAKE) -f project-algo/CMakeFiles/polygon.dir/build.make project-algo/CMakeFiles/polygon.dir/build
-.PHONY : polygon/fast
-
-#=============================================================================
-# Target rules for targets named polygon1
-
-# Build rule for target.
-polygon1: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 polygon1
-.PHONY : polygon1
-
-# fast build rule for target.
-polygon1/fast:
-	$(MAKE) -f project-algo/CMakeFiles/polygon1.dir/build.make project-algo/CMakeFiles/polygon1.dir/build
-.PHONY : polygon1/fast
-
-#=============================================================================
-# Target rules for targets named algorithms
-
-# Build rule for target.
-algorithms: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 algorithms
-.PHONY : algorithms
-
-# fast build rule for target.
-algorithms/fast:
-	$(MAKE) -f project-algo/includes/CMakeFiles/algorithms.dir/build.make project-algo/includes/CMakeFiles/algorithms.dir/build
-.PHONY : algorithms/fast
+polygon_op/fast:
+	$(MAKE) -f CMakeFiles/polygon_op.dir/build.make CMakeFiles/polygon_op.dir/build
+.PHONY : polygon_op/fast
 
 main.o: main.cpp.o
 
@@ -181,7 +129,7 @@ main.o: main.cpp.o
 
 # target to build an object file
 main.cpp.o:
-	$(MAKE) -f CMakeFiles/optimal_polygon.dir/build.make CMakeFiles/optimal_polygon.dir/main.cpp.o
+	$(MAKE) -f CMakeFiles/polygon_op.dir/build.make CMakeFiles/polygon_op.dir/main.cpp.o
 .PHONY : main.cpp.o
 
 main.i: main.cpp.i
@@ -190,7 +138,7 @@ main.i: main.cpp.i
 
 # target to preprocess a source file
 main.cpp.i:
-	$(MAKE) -f CMakeFiles/optimal_polygon.dir/build.make CMakeFiles/optimal_polygon.dir/main.cpp.i
+	$(MAKE) -f CMakeFiles/polygon_op.dir/build.make CMakeFiles/polygon_op.dir/main.cpp.i
 .PHONY : main.cpp.i
 
 main.s: main.cpp.s
@@ -199,7 +147,7 @@ main.s: main.cpp.s
 
 # target to generate assembly for a file
 main.cpp.s:
-	$(MAKE) -f CMakeFiles/optimal_polygon.dir/build.make CMakeFiles/optimal_polygon.dir/main.cpp.s
+	$(MAKE) -f CMakeFiles/polygon_op.dir/build.make CMakeFiles/polygon_op.dir/main.cpp.s
 .PHONY : main.cpp.s
 
 # Help Target
@@ -210,11 +158,7 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... optimal_polygon"
-	@echo "... opt_algorithms"
-	@echo "... polygon"
-	@echo "... polygon1"
-	@echo "... algorithms"
+	@echo "... polygon_op"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
