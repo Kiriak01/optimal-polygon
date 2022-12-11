@@ -11,8 +11,6 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
 
-    
-    
 
     vector<char*> argvsFirstAssign;
     char str0[] = "project-algo"; 
@@ -29,10 +27,18 @@ int main(int argc, char* argv[]) {
     char str10[] = "-initialization";
     char str11[] = "1a"; 
     char* argv1[] = {str1,str2,str12,str4,str5,str6,str7,str8,str9,str10,str11};  
-    for (int i = 0; i < 11; i++) {
-        argvsFirstAssign.push_back(argv1[i]); 
-    }    
-  
+
+    string algorithm = argv[6]; 
+
+    if (algorithm == "local_search") {
+        for (int i = 0; i < 11; i++) {
+            argvsFirstAssign.push_back(argv1[i]); 
+        }
+    } else {
+        for (int i = 0; i < 12; i++) {
+            argvsFirstAssign.push_back(argv1[i]); 
+        }
+    }
     
     Polygon_2 initialPolygon;
     initialPolygon = test_polyg(argvsFirstAssign.size(),argvsFirstAssign, str3);   //getting the polygon from 1st assignment by calling test_polyg function  
@@ -46,7 +52,6 @@ int main(int argc, char* argv[]) {
     reform(vertex_iterators,initialPolygon);                         //correct iterator to acquire it.
  
 
-    string algorithm = argv[6]; 
     int L = stoi(argv[8]); 
     string area_polygonization = argv[9]; 
     bool max_area_polygonization,min_area_polygonization; 
@@ -57,14 +62,17 @@ int main(int argc, char* argv[]) {
         max_area_polygonization = false; 
         min_area_polygonization = true; 
     }
-    string fs(argv[11]); 
-    float threshold = stof(fs);
+    
     int total_modifications = 0; 
+
+    cout << "algorithm is " << algorithm << endl; 
     
     if (algorithm == "local_search") {
     clock_t start, end;
     start = clock();
     float DA;
+    string fs(argv[11]); 
+    float threshold = stof(fs);
     if (max_area_polygonization) {
         DA = 5.0; 
     }else {
@@ -179,6 +187,45 @@ int main(int argc, char* argv[]) {
 
 
 
+    }else if(algorithm =="simulated_annealing"){
+
+        clock_t start, end;
+        start = clock();
+
+        string ann = argv[11];
+        string m = argv[9];
+
+        Polygon_2 ch;
+        CGAL::convex_hull_2( initialPolygon.begin(), initialPolygon.end(), std::back_inserter(ch));
+        int n=initialPolygon.size();
+
+        Polygon_2 new_p = simulated_annealing(initialPolygon,ch,n,m,ann,L); 
+
+        end = clock();
+
+        double time_taken = double(end - start) / double(CLOCKS_PER_SEC);
+        time_taken *=1000;
+        
+        std::cout << "Optimal Area Polygonization"<< std::endl;
+    
+        for(auto it = new_p.begin(); it!= new_p.end();++it){
+            std::cout << *it << std::endl;
+        }
+
+        for(const Segment_2& e: new_p.edges()){
+            std::cout << e << std::endl;
+        }
+
+        Polygon_2 chn;
+        CGAL::convex_hull_2( initialPolygon.begin(), initialPolygon.end(), std::back_inserter(chn));
+
+        std::cout << "Algorithm: "<< algorithm << m << std::endl;
+        std::cout << "area initial: " << initialPolygon.area() << std::endl;
+        std::cout << "area: " << new_p.area() << std::endl;
+        std::cout << "ratio_initial: " << initialPolygon.area()/ch.area() << std::endl;
+        std::cout << "ratio: " << new_p.area()/chn.area() << std::endl;
+        cout << "Construction time: " << fixed << round(time_taken) << setprecision(5);
+        cout << " ms " << endl; 
     }
     
     return 0; 

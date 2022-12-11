@@ -1,2 +1,0 @@
-/usr/bin/ar qc libopt_algorithms.a  CMakeFiles/opt_algorithms.dir/opt_algorithms.cpp.o
-/usr/bin/ranlib libopt_algorithms.a
