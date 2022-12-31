@@ -1,0 +1,13 @@
+/home/george/Desktop/optimal-algo/CMakeFiles/rebuild_cache.dir
+/home/george/Desktop/optimal-algo/CMakeFiles/edit_cache.dir
+/home/george/Desktop/optimal-algo/CMakeFiles/optimal_polygon.dir
+/home/george/Desktop/optimal-algo/includes/CMakeFiles/rebuild_cache.dir
+/home/george/Desktop/optimal-algo/includes/CMakeFiles/edit_cache.dir
+/home/george/Desktop/optimal-algo/includes/CMakeFiles/opt_algorithms.dir
+/home/george/Desktop/optimal-algo/project-algo/CMakeFiles/edit_cache.dir
+/home/george/Desktop/optimal-algo/project-algo/CMakeFiles/rebuild_cache.dir
+/home/george/Desktop/optimal-algo/project-algo/CMakeFiles/polygon.dir
+/home/george/Desktop/optimal-algo/project-algo/CMakeFiles/polygon1.dir
+/home/george/Desktop/optimal-algo/project-algo/includes/CMakeFiles/rebuild_cache.dir
+/home/george/Desktop/optimal-algo/project-algo/includes/CMakeFiles/edit_cache.dir
+/home/george/Desktop/optimal-algo/project-algo/includes/CMakeFiles/algorithms.dir

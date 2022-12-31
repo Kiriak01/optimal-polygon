@@ -16,6 +16,11 @@
 #include <CGAL/Point_2.h>
 #include <CGAL/Origin.h>
 #include <string> 
+// #include "project-algo"
+// #include "/home/george/Desktop/optimal-algo/project-algo/test_polyg.cpp"
+// #include "/home/george/Desktop/optimal-algo/project-algo/algorithms.hpp"
+// #include "/home/george/Desktop/optimal-algo/project-algo/algorithms.cpp"
+
 
 
 //simulated annealing 
@@ -66,6 +71,13 @@ typedef CGAL::Polygon_2<K> Polygon_2;
 typedef std::vector<Point_2> Points;
 using std::cout; using std::endl;
 
+extern Polygon_2 test_polyg(int , std::vector<char*> , std::string );
+extern Polygon_2 calc_convex_hull(Polygon_2); 
+extern void reform(std::vector<std::pair<Point_2,int>>&,Polygon_2);
+extern int findIterator(std::vector<std::pair<Point_2,int>>, Point_2);
+
+
+
 //simulated annealing
 typedef CGAL::Simple_cartesian<double> K;
 typedef CGAL::Polygon_2<K> Polygon_2;
@@ -86,6 +98,7 @@ Segment_2 findPriorEdge(Point_2,Polygon_2);
 Segment_2 findNextEdge(Point_2,Polygon_2); 
 void printPolygonEdges(Polygon_2); 
 bool feasibleSolution(float,float,int,std::vector<std::pair<Segment_2,std::vector<Point_2>>>&, std::vector<float>&, std::vector<Point_2>, bool, bool, Segment_2);
+void opt_local_search(std::string, std::string, int , std::string , std::string , std::string, int , std::string, std::string );
 
 
 //for simulated annealing 

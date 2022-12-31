@@ -24,13 +24,15 @@ Segment_2 findPriorEdge(Point_2 point, Polygon_2 polygon) {
             return edge; 
         }
     }
+    return Segment_2(Point_2(0,0), Point_2(0,0));    //NULL segment 
 }
 Segment_2 findNextEdge(Point_2 point, Polygon_2 polygon) {
     for (const Segment_2& edge: polygon.edges()) {
         if (edge.source() == point) {
             return edge; 
         }
-    }
+    } 
+    return Segment_2(Point_2(0,0), Point_2(0,0));    //NULL segment
 }
 
 void printPolygonEdges(Polygon_2 polygon){
@@ -63,6 +65,237 @@ bool feasibleSolution(float new_area, float initialArea, int remainsSimple ,vect
     }
     return false; 
 }
+
+void opt_local_search(string filename, string algorithm, int L, string area_polygonization, string threshold,
+                      string init_algo, int init_edge_selection, string init_vertex_sort, string annealing) { 
+    vector<char*> argvsFirstAssign;
+    char str0[] = "project-algo"; 
+    char str1[] = "polygon"; 
+    char str2[] = "-i"; 
+    
+    char str12[] = "r";
+    char str4[] = "-o";
+    char str5[] = "polygon"; 
+    char str6[] = "-algorithm";
+    
+    char str7[50]; 
+
+    if (init_algo == "incremental") {
+        strncpy(str7, "incremental", 15);      
+    }else if (init_algo == "convexhull"){
+        strncpy(str7, "convexhull", 15);      
+    }
+    char str8[] = "-edge_selection";
+    char str9[2];                   // max area: 3, min area: 2 , rand: 1 
+    if (init_edge_selection == 2) {
+        strncpy(str9, "2", 2);      //getting min polygon from 1st assignment
+    }else {
+        strncpy(str9, "3", 2);      //getting max polygon from 1st assignment
+    }
+    char str10[] = "-initialization";
+    char str11[] = "1a"; 
+    char* argv1[] = {str1,str2,str12,str4,str5,str6,str7,str8,str9,str10,str11};  
+
+    // string algorithm = "local_search"; 
+
+    if (algorithm == "local_search") {
+        for (int i = 0; i < 11; i++) {
+            argvsFirstAssign.push_back(argv1[i]); 
+        }
+    } else {
+        for (int i = 0; i < 12; i++) {
+            argvsFirstAssign.push_back(argv1[i]); 
+        }
+    }
+    
+    Polygon_2 initialPolygon;
+    initialPolygon = test_polyg(argvsFirstAssign.size(),argvsFirstAssign, filename);   //getting the polygon from 1st assignment by calling test_polyg function  
+    
+    
+
+    double initialPolygonArea = abs(initialPolygon.area());  
+    Polygon_2 initialConvexHull = calc_convex_hull(initialPolygon); 
+    double initialCHarea = abs(initialConvexHull.area());
+    double initialRatio = initialPolygonArea/initialCHarea; 
+  
+    std::vector<pair<Point_2,int>> vertex_iterators;                //initializing a vector of pairs that holds each vertex of polygon and the 
+    reform(vertex_iterators,initialPolygon);                         //correct iterator to acquire it.
+ 
+
+    // int L = stoi(argv[8]); 
+    // int L = 5; 
+    // string area_polygonization = argv[9]; 
+    // string area_polygonization = "-max"; 
+    bool max_area_polygonization,min_area_polygonization; 
+    string m; 
+    if (area_polygonization == "-max") {
+        max_area_polygonization = true; 
+        min_area_polygonization = false; 
+        m = "max"; 
+    }else if (area_polygonization == "-min") {
+        max_area_polygonization = false; 
+        min_area_polygonization = true; 
+        m = "min"; 
+    }
+    
+    int total_modifications = 0; 
+
+    cout << endl <<  "Testing for filename: " << filename << endl; 
+
+    if (algorithm == "local_search") {
+    clock_t start, end;
+    start = clock();
+    float DA;
+    // string fs(argv[11]); 
+    string fs = "0.1"; 
+    float threshold = stof(fs);
+    if (max_area_polygonization) {
+        DA = 5.0; 
+    }else {
+        DA = 15.0;   
+    }
+    vector<pair<Segment_2,vector<Point_2>>> T; 
+    vector<float>T_areas; 
+
+    while(DA >= threshold) {   
+        float initialArea = abs(initialPolygon.area()); 
+        vector <Point_2> path;  
+        bool has_solution = false; 
+        int breakpoint = initialPolygon.vertices().size() - L ; 
+        for (const Segment_2& e :initialPolygon.edges()) {            //for each edge of polygon 
+            int eSourceIt = findIterator(vertex_iterators,e.source());   //finding iterator of u1 vertex of blue edge    
+            for (const Point_2& vertex: initialPolygon.vertices()) {        
+                int vertex_iterator = findIterator(vertex_iterators,vertex); 
+                if (vertex_iterator > breakpoint) {                        
+                    path.clear(); 
+                    break; 
+                }
+                for (int i = 1; i <= L; i++) {
+                    for (int j = 0 ; j < i; j++) {
+                        path.push_back(vertex_iterators[j+vertex_iterator].first);      //creating the path to be inserted depending on L parameter 
+                    }                                                                   // L increases its time so we get every possible path from L=1,L=2,L=3 etc.
+                                                                                        //depending on the value of L. 
+                reverse(path.begin(),path.end());                                       
+    
+                Polygon_2 testPolygon = initialPolygon;                 //using a testPolygon so initialPolygon will stay the same. if path solution is feasible
+                                                                        //then must apply changes to initialPolygon as well 
+                for (int i = 0; i < path.size(); i++) {                   ///inserting the path to edge  
+                    vertex_iterator = findIterator(vertex_iterators,path[i]); 
+                    testPolygon.erase(testPolygon.begin() + vertex_iterator);
+                    testPolygon.insert(testPolygon.begin() + eSourceIt , path[i]);
+                }
+
+                float new_area = abs(testPolygon.area());   
+                initialArea = abs(initialPolygon.area());                
+                int remainsSimple = testPolygon.is_simple(); 
+                bool pathIsFeasibleSol = feasibleSolution(new_area,initialArea,remainsSimple, T, T_areas,path,max_area_polygonization,
+                                        min_area_polygonization,e); 
+                
+                testPolygon.clear();           //clearing the testPolygon for next iteration
+                path.clear();                   //clearing the path for next iteration 
+                }
+        
+            }
+        }
+        if (T_areas.size() != 0) {
+            int it; 
+            if (max_area_polygonization) {
+                it = distance(T_areas.begin(),max_element(T_areas.begin(), T_areas.end()));
+            }else if (min_area_polygonization) {
+                it = distance(T_areas.begin(),min_element(T_areas.begin(), T_areas.end()));
+            }
+
+            vector <Point_2> winningPath; 
+            for (int j = 0; j < T[it].second.size(); j++) {
+                winningPath.push_back(T[it].second[j]); 
+            }
+
+            int eSourceIt = findIterator(vertex_iterators,T[it].first.source()); 
+            Polygon_2 potentialPolygon = initialPolygon; 
+            for (int i = 0; i < winningPath.size(); i++) {                   ///inserting path to edge 
+                int vertex_iterator = findIterator(vertex_iterators,winningPath[i]); 
+                potentialPolygon.erase(potentialPolygon.begin() + vertex_iterator);
+                potentialPolygon.insert(potentialPolygon.begin() + eSourceIt , winningPath[i]);
+            }
+            
+            if (max_area_polygonization) {
+                initialArea = abs(initialPolygon.area());
+                DA = abs(potentialPolygon.area()) - initialArea;  // recalculate DA
+                initialPolygon = potentialPolygon;                 //new Polygon with the best solution applied to it 
+                reform(vertex_iterators,initialPolygon);            //reform vertex iterators so we get the correct iterator for each vertex for the new Polygon
+                total_modifications++; 
+            }else if (min_area_polygonization) {
+                initialArea = abs(initialPolygon.area());
+                DA = abs(initialPolygon.area()) - abs(potentialPolygon.area());
+                initialPolygon = potentialPolygon; 
+                reform(vertex_iterators,initialPolygon); 
+                total_modifications++; 
+            }
+
+        T.clear(); 
+        T_areas.clear();  
+       }else {
+            break;                //if there are no possible solutions to be applied to polygon, break out of the loop and end the proccess 
+       }
+        
+    }
+    end = clock();
+    double time_taken = double(end - start) / double(CLOCKS_PER_SEC);
+    time_taken *=1000;
+
+
+    // for(const Point_2& vertex: initialPolygon.vertices()) {
+    //     cout << vertex << endl; 
+    // }
+    // for(const Segment_2& edge: initialPolygon.edges()) {
+    //     cout << edge << endl; 
+    // }
+
+    cout << "\nL: " << L << endl; 
+    cout << "Optimized polygonization (2nd assign): " << area_polygonization << endl; 
+    cout << "Algorithm: " << algorithm << endl; 
+    cout << "area_initial: " << initialPolygonArea << endl; 
+    cout << "area: " << abs(initialPolygon.area()) << endl; 
+    cout << "ratio_initial: "<< initialRatio << endl; 
+
+    Polygon_2 finalCH = calc_convex_hull(initialPolygon); 
+    double finalCHarea = abs(finalCH.area()); 
+    cout << "ratio: " << abs(initialPolygon.area())/finalCHarea << endl; 
+    cout << "Construction time: " << fixed << round(time_taken) << setprecision(5);
+    cout << " ms " << endl;    
+    cout << "Initial polygon made with algorithm: " << init_algo << endl; 
+    } else {
+
+        clock_t start, end;
+        start = clock();
+        Polygon_2 ch;
+        CGAL::convex_hull_2( initialPolygon.begin(), initialPolygon.end(), std::back_inserter(ch));
+        int n=initialPolygon.size();
+        // string ann = "subdivisor"; // 
+        // string m = "min";
+        Polygon_2 new_p = simulated_annealing(initialPolygon,ch,n,m,annealing,L); 
+        end = clock();
+        
+        double time_taken = double(end - start) / double(CLOCKS_PER_SEC);
+        time_taken *=1000;
+
+        Polygon_2 chn;
+        CGAL::convex_hull_2( initialPolygon.begin(), initialPolygon.end(), std::back_inserter(chn));
+        
+        cout << "Optimized polygonization (2nd assign): " << area_polygonization << endl;
+        std::cout << "Algorithm: "<< algorithm << std::endl;
+        std::cout << "area initial: " << initialPolygon.area() << std::endl;
+        std::cout << "area: " << new_p.area() << std::endl;
+        std::cout << "ratio_initial: " << initialPolygon.area()/ch.area() << std::endl;
+        std::cout << "ratio: " << new_p.area()/chn.area() << std::endl;
+        cout << "Construction time: " << fixed << round(time_taken) << setprecision(5);
+        cout << " ms " << endl; 
+        cout << "Initial polygon made with algorithm: " << init_algo << endl; 
+
+    }
+}; 
+
+
 
 
 //simulated annealing 
@@ -142,7 +375,6 @@ Polygon_2 simulated_annealing(Polygon_2 P,Polygon_2 ch, int n, string m, string 
     int maxit=n;
     Polygon_2 pl;
     if(m=="min"){    
-        std::cout << "IN" <<std::endl;
         E = n*(P.area()/ch.area());
     }else{
         E = n*(1-(P.area()/ch.area()));
