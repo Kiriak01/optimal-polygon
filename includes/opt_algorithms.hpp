@@ -99,7 +99,7 @@ Segment_2 findNextEdge(Point_2,Polygon_2);
 void printPolygonEdges(Polygon_2); 
 bool feasibleSolution(float,float,int,std::vector<std::pair<Segment_2,std::vector<Point_2>>>&, std::vector<float>&, std::vector<Point_2>, bool, bool, Segment_2);
 void opt_local_search(std::string, std::string, int , std::string , std::string , std::string, int , std::string, std::string );
-
+int getSumPoints(std::string); 
 
 //for simulated annealing 
 Polygon_2 simulated_annealing(Polygon_2 ,Polygon_2 , int , std::string , std::string , int);

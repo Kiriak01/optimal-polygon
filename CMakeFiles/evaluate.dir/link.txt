@@ -1,0 +1,1 @@
+/usr/bin/c++     CMakeFiles/evaluate.dir/main.cpp.o  -o evaluate  includes/libopt_algorithms.a project-algo/libpolygon1.a /usr/lib/x86_64-linux-gnu/libgmpxx.so /usr/lib/x86_64-linux-gnu/libmpfr.so /usr/lib/x86_64-linux-gnu/libgmp.so -pthread 

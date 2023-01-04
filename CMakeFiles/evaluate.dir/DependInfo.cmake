@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/george/Desktop/optimal-algo/main.cpp" "/home/george/Desktop/optimal-algo/CMakeFiles/optimal_polygon.dir/main.cpp.o"
+  "/home/george/Desktop/optimal-algo/main.cpp" "/home/george/Desktop/optimal-algo/CMakeFiles/evaluate.dir/main.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

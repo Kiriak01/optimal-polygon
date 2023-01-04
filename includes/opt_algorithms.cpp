@@ -66,6 +66,14 @@ bool feasibleSolution(float new_area, float initialArea, int remainsSimple ,vect
     return false; 
 }
 
+int getSumPoints(string file) {
+    int pos = file.find(".");
+    string sub = file.substr(0 , pos);
+    string substr = sub.substr(sub.length() - 7); 
+    int number = stoi(substr);
+    return number ; 
+}
+
 void opt_local_search(string filename, string algorithm, int L, string area_polygonization, string threshold,
                       string init_algo, int init_edge_selection, string init_vertex_sort, string annealing) { 
     vector<char*> argvsFirstAssign;
@@ -269,7 +277,9 @@ void opt_local_search(string filename, string algorithm, int L, string area_poly
         clock_t start, end;
         start = clock();
         Polygon_2 ch;
+        
         CGAL::convex_hull_2( initialPolygon.begin(), initialPolygon.end(), std::back_inserter(ch));
+        
         int n=initialPolygon.size();
         // string ann = "subdivisor"; // 
         // string m = "min";

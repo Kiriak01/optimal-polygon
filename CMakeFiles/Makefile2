@@ -53,7 +53,7 @@ CMAKE_BINARY_DIR = /home/george/Desktop/optimal-algo
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/optimal_polygon.dir/all
+all: CMakeFiles/evaluate.dir/all
 all: includes/all
 all: project-algo/all
 
@@ -66,7 +66,7 @@ preinstall: project-algo/preinstall
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean: CMakeFiles/optimal_polygon.dir/clean
+clean: CMakeFiles/evaluate.dir/clean
 clean: includes/clean
 clean: project-algo/clean
 
@@ -131,32 +131,32 @@ project-algo/includes/clean: project-algo/includes/CMakeFiles/algorithms.dir/cle
 .PHONY : project-algo/includes/clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/optimal_polygon.dir
+# Target rules for target CMakeFiles/evaluate.dir
 
 # All Build rule for target.
-CMakeFiles/optimal_polygon.dir/all: includes/CMakeFiles/opt_algorithms.dir/all
-CMakeFiles/optimal_polygon.dir/all: project-algo/CMakeFiles/polygon1.dir/all
-	$(MAKE) -f CMakeFiles/optimal_polygon.dir/build.make CMakeFiles/optimal_polygon.dir/depend
-	$(MAKE) -f CMakeFiles/optimal_polygon.dir/build.make CMakeFiles/optimal_polygon.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/george/Desktop/optimal-algo/CMakeFiles --progress-num=5,6 "Built target optimal_polygon"
-.PHONY : CMakeFiles/optimal_polygon.dir/all
+CMakeFiles/evaluate.dir/all: includes/CMakeFiles/opt_algorithms.dir/all
+CMakeFiles/evaluate.dir/all: project-algo/CMakeFiles/polygon1.dir/all
+	$(MAKE) -f CMakeFiles/evaluate.dir/build.make CMakeFiles/evaluate.dir/depend
+	$(MAKE) -f CMakeFiles/evaluate.dir/build.make CMakeFiles/evaluate.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/george/Desktop/optimal-algo/CMakeFiles --progress-num=3,4 "Built target evaluate"
+.PHONY : CMakeFiles/evaluate.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/optimal_polygon.dir/rule: cmake_check_build_system
+CMakeFiles/evaluate.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/george/Desktop/optimal-algo/CMakeFiles 6
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/optimal_polygon.dir/all
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/evaluate.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/george/Desktop/optimal-algo/CMakeFiles 0
-.PHONY : CMakeFiles/optimal_polygon.dir/rule
+.PHONY : CMakeFiles/evaluate.dir/rule
 
 # Convenience name for target.
-optimal_polygon: CMakeFiles/optimal_polygon.dir/rule
+evaluate: CMakeFiles/evaluate.dir/rule
 
-.PHONY : optimal_polygon
+.PHONY : evaluate
 
 # clean rule for target.
-CMakeFiles/optimal_polygon.dir/clean:
-	$(MAKE) -f CMakeFiles/optimal_polygon.dir/build.make CMakeFiles/optimal_polygon.dir/clean
-.PHONY : CMakeFiles/optimal_polygon.dir/clean
+CMakeFiles/evaluate.dir/clean:
+	$(MAKE) -f CMakeFiles/evaluate.dir/build.make CMakeFiles/evaluate.dir/clean
+.PHONY : CMakeFiles/evaluate.dir/clean
 
 #=============================================================================
 # Target rules for target includes/CMakeFiles/opt_algorithms.dir
@@ -165,7 +165,7 @@ CMakeFiles/optimal_polygon.dir/clean:
 includes/CMakeFiles/opt_algorithms.dir/all:
 	$(MAKE) -f includes/CMakeFiles/opt_algorithms.dir/build.make includes/CMakeFiles/opt_algorithms.dir/depend
 	$(MAKE) -f includes/CMakeFiles/opt_algorithms.dir/build.make includes/CMakeFiles/opt_algorithms.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/george/Desktop/optimal-algo/CMakeFiles --progress-num=3,4 "Built target opt_algorithms"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/george/Desktop/optimal-algo/CMakeFiles --progress-num=5,6 "Built target opt_algorithms"
 .PHONY : includes/CMakeFiles/opt_algorithms.dir/all
 
 # Build rule for subdir invocation for target.

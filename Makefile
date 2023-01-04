@@ -111,17 +111,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named optimal_polygon
+# Target rules for targets named evaluate
 
 # Build rule for target.
-optimal_polygon: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 optimal_polygon
-.PHONY : optimal_polygon
+evaluate: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 evaluate
+.PHONY : evaluate
 
 # fast build rule for target.
-optimal_polygon/fast:
-	$(MAKE) -f CMakeFiles/optimal_polygon.dir/build.make CMakeFiles/optimal_polygon.dir/build
-.PHONY : optimal_polygon/fast
+evaluate/fast:
+	$(MAKE) -f CMakeFiles/evaluate.dir/build.make CMakeFiles/evaluate.dir/build
+.PHONY : evaluate/fast
 
 #=============================================================================
 # Target rules for targets named opt_algorithms
@@ -181,7 +181,7 @@ main.o: main.cpp.o
 
 # target to build an object file
 main.cpp.o:
-	$(MAKE) -f CMakeFiles/optimal_polygon.dir/build.make CMakeFiles/optimal_polygon.dir/main.cpp.o
+	$(MAKE) -f CMakeFiles/evaluate.dir/build.make CMakeFiles/evaluate.dir/main.cpp.o
 .PHONY : main.cpp.o
 
 main.i: main.cpp.i
@@ -190,7 +190,7 @@ main.i: main.cpp.i
 
 # target to preprocess a source file
 main.cpp.i:
-	$(MAKE) -f CMakeFiles/optimal_polygon.dir/build.make CMakeFiles/optimal_polygon.dir/main.cpp.i
+	$(MAKE) -f CMakeFiles/evaluate.dir/build.make CMakeFiles/evaluate.dir/main.cpp.i
 .PHONY : main.cpp.i
 
 main.s: main.cpp.s
@@ -199,7 +199,7 @@ main.s: main.cpp.s
 
 # target to generate assembly for a file
 main.cpp.s:
-	$(MAKE) -f CMakeFiles/optimal_polygon.dir/build.make CMakeFiles/optimal_polygon.dir/main.cpp.s
+	$(MAKE) -f CMakeFiles/evaluate.dir/build.make CMakeFiles/evaluate.dir/main.cpp.s
 .PHONY : main.cpp.s
 
 # Help Target
@@ -210,7 +210,7 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... optimal_polygon"
+	@echo "... evaluate"
 	@echo "... opt_algorithms"
 	@echo "... polygon"
 	@echo "... polygon1"

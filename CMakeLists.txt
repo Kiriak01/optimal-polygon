@@ -39,10 +39,10 @@ list(APPEND EXTRA_LIBS opt_algorithms polygon1) #polygon1
 # Creating entries for target: optimal_polygon
 # ############################
 
-add_executable( optimal_polygon  main.cpp )
+add_executable( evaluate  main.cpp )
 
 add_to_cached_list( CGAL_EXECUTABLE_TARGETS optimal_polygon )
 
 # Link the executable to CGAL and third-party libraries
-target_link_libraries(optimal_polygon PRIVATE CGAL::CGAL ${EXTRA_LIBS}) 
+target_link_libraries(evaluate PRIVATE CGAL::CGAL ${EXTRA_LIBS}) 
 
