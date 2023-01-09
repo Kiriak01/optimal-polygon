@@ -14,7 +14,6 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
 
-
     vector<std::string> files; 
 
     DIR *dir;
@@ -38,53 +37,62 @@ int main(int argc, char* argv[]) {
     return EXIT_FAILURE;
     }
 
-    // cout << "files " << endl; 
-    for (int i = 0; i < files.size(); i++) {
-        int points_amount = getSumPoints(files[i]); 
-        // cout << files[i] << endl; 
     
-        // opt_local_search(files[i], "local_search", 3, "-max", "0.1", "incremental",  3, "1b", "global"); 
+
+    vector< pair <std::string, std::string>> algorithms = {
+        {"local_search", "incremental"} , {"local_search", "convexhull"}
+    };
+
+    vector <std::string> algo_results;
+    double max_ratio, min_ratio, cut_off;
+    int points_amount; 
+    
+    vector <pair <std::string , int>> algo_points;
+    vector <pair <double, double>> algo_res; 
+    
+
+    for (int i = 0; i < algorithms.size(); i++) {
+        string opt_algorithm = algorithms[i].first;
+        string init_algorithm = algorithms[i].second; 
+        string total_algorithm = opt_algorithm + "-" + init_algorithm; 
+        for (int j = 0; j < files.size(); j++) {
+            points_amount = getSumPoints(files[j]); 
+            cut_off  = points_amount * 500; //(ms)
+            max_ratio = opt_local_search(files[j], opt_algorithm, 1, "-max", "0.1",
+                                            init_algorithm,  2, "2b", "global", cut_off); 
+            min_ratio = opt_local_search(files[j], opt_algorithm, 1, "-min", "0.1",
+                                           init_algorithm,  2, "2b", "global", cut_off); 
+        
+            algo_points.push_back(make_pair(total_algorithm,points_amount));
+            algo_res.push_back(make_pair(max_ratio,min_ratio)); 
+            
+        }
     }
 
-    // opt_local_search("/home/george/Desktop/instances/data/images/euro-night-0000020.instance", "simulated_annealing", 3, "-max", "0.1", "incremental",  3, "1a"); 
-    // opt_local_search("/home/george/Desktop/instances/data/images/euro-night-0000020.instance", "local_search", 1, "-max", "0.1", "incremental",  3, "1b", "global"); 
-    // opt_local_search("/home/george/Desktop/instances/data/images/euro-night-0000020.instance", "simulated_annealing", 3, "-max", "0.1", "convexhull",  1, "1a", "global"); 
-    // opt_local_search("/home/george/Desktop/instances/data/images/euro-night-0000040.instance", "local_search", 5, "-min", "0.1", "incremental",  2, "1a", "global"); 
-    // opt_local_search("/home/george/Desktop/instances/data/images/euro-night-0000020.instance", "simulated_annealing", 3, "-max", "0.1", "incremental",  3, "1a", "global"); 
-    // opt_local_search("/home/george/Desktop/instances/data/images/euro-night-0000050.instance", "local_search", 8, "-max", "0.1", "incremental",  3, "1a", "global"); 
-    
-    // opt_local_search("/home/george/Desktop/instances/data/images/euro-night-0000010.instance", "local_search", 5, "-max", "0.1", "convexhull",  2, "1a", "global"); 
-    // opt_local_search("/home/george/Desktop/instances/data/images/euro-night-0000020.instance", "local_search", 5, "-max", "0.1", "convexhull",  2, "1a", "global"); 
-    // opt_local_search("/home/george/Desktop/instances/data/images/euro-night-0000030.instance", "local_search", 5, "-max", "0.1", "convexhull",  2, "1a", "global"); 
-    // opt_local_search("/home/george/Desktop/instances/data/images/euro-night-0000040.instance", "local_search", 5, "-max", "0.1", "convexhull",  2, "1a", "global"); 
-    
-    // opt_local_search("/home/george/Desktop/instances/data/images/euro-night-0000060.instance", "local_search", 2, "-max", "0.1", "incremental",  2, "1b", "global"); 
-    // opt_local_search("/home/george/Desktop/instances/data/images/euro-night-0000070.instance", "local_search", 2, "-max", "0.1", "incremental",  2, "1b", "global"); 
-    // opt_local_search("/home/george/Desktop/instances/data/images/euro-night-0000080.instance", "local_search", 2, "-max", "0.1", "incremental",  2, "1b", "global"); 
-    
-    
-    // opt_local_search("/home/george/Desktop/instances/data/images/euro-night-0000010.instance", "local_search", 5, "-min", "0.1", "incremental",  3, "1a", "global"); 
-    // opt_local_search("/home/george/Desktop/instances/data/images/euro-night-0000020.instance", "local_search", 5, "-min", "0.1", "incremental",  3, "1b", "global"); 
-    // opt_local_search("/home/george/Desktop/instances/data/images/euro-night-0000030.instance", "local_search", 5, "-min", "0.1", "incremental",  3, "2a", "global"); 
-    
-    // opt_local_search("/home/george/Desktop/instances/data/images/euro-night-0000040.instance", "local_search", 2, "-min", "0.1", "incremental",  2, "2b", "global"); 
-    // opt_local_search("/home/george/Desktop/instances/data/images/euro-night-0000050.instance", "local_search", 2, "-min", "0.1", "incremental",  2, "2b", "global"); 
-    // opt_local_search("/home/george/Desktop/instances/data/images/euro-night-0000060.instance", "local_search", 2, "-min", "0.1", "incremental",  2, "2b", "global"); 
-    opt_local_search("/home/george/Desktop/instances/data/images/euro-night-0000500.instance", "local_search", 2, "-min", "0.1", "incremental",  2, "2b", "global"); 
+    vector <pair <pair <std::string , double > , int >> max_ratio_algo; 
+    vector <pair <pair <std::string , double > , int >> min_ratio_algo; 
+    for (int i = 0; i < algorithms.size(); i++) {
+        for (int j = 0; j < files.size(); j++) {
+            points_amount = getSumPoints(files[j]); 
+            pair <std::string , double> p;
+            p.first = algorithms[i].first + "-" + algorithms[i].second;
+            p.second = 0.0;
+            max_ratio_algo.push_back(make_pair(p,points_amount));
+            min_ratio_algo.push_back(make_pair(p,points_amount));
+        }
+    }
 
+    getBestResults(algo_points,algo_res,max_ratio_algo,min_ratio_algo); 
 
-    //gia min = 100,200 shmeia ta kalytera apotelesmata dinei o local search me L=2, kai incremental me max polygonization(3 = edge selection)
+    printResultsBoard(max_ratio_algo,min_ratio_algo); 
 
-    
-    
-    // opt_local_search("/home/george/Desktop/instances/data/images/euro-night-0000100.instance", "local_search", 2, "-max", "0.1", "incremental",  2, "1b", "global"); 
-
-    // for (int i = 1; i < 11; i++) {
-    //     // opt_local_search("/home/george/Desktop/instances/data/images/euro-night-0000030.instance", "local_search", i, "-max", "0.1", "convexhull",  3, "2b", "global"); 
-    //     // opt_local_search("/home/george/Desktop/instances/data/images/euro-night-0000010.instance", i, "-min", "0.1", "convexhull",  2, "1b"); 
+    // for (int i = 0; i < max_ratio_algo.size(); i++) {
+    //     pair <std::string, double> p;
+    //     p = max_ratio_algo[i].first; 
+    //     int points = max_ratio_algo[i].second;
+    //     cout << p.first << " , " << p.second << " , " << points << endl; 
     // }
-    // paikse me tis parametrous. epishs ftiakse vectors gia max kai gia min antistoixa kai des tis megalyteres kai mikroteres times 
-    // kai pote autes prokyptoyn(gia poies parametrous kai gia poia arxeia).  
+   
 
     return 0; 
 }

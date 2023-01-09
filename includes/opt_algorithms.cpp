@@ -74,8 +74,7 @@ int getSumPoints(string file) {
     return number ; 
 }
 
-void opt_local_search(string filename, string algorithm, int L, string area_polygonization, string threshold,
-                      string init_algo, int init_edge_selection, string init_vertex_sort, string annealing) { 
+Polygon_2 getInitialPolygon(string init_algo, int init_edge_selection, string algorithm, string filename) {
     vector<char*> argvsFirstAssign;
     char str0[] = "project-algo"; 
     char str1[] = "polygon"; 
@@ -118,8 +117,14 @@ void opt_local_search(string filename, string algorithm, int L, string area_poly
     
     Polygon_2 initialPolygon;
     initialPolygon = test_polyg(argvsFirstAssign.size(),argvsFirstAssign, filename);   //getting the polygon from 1st assignment by calling test_polyg function  
-    
-    
+    return initialPolygon;
+}
+
+
+double opt_local_search(string filename, string algorithm, int L, string area_polygonization, string threshold,
+                      string init_algo, int init_edge_selection, string init_vertex_sort, string annealing, double cut_off) { 
+    cout << "optimizing file: " << filename << endl;  
+    Polygon_2 initialPolygon = getInitialPolygon(init_algo, init_edge_selection ,algorithm, filename);
 
     double initialPolygonArea = abs(initialPolygon.area());  
     Polygon_2 initialConvexHull = calc_convex_hull(initialPolygon); 
@@ -130,10 +135,7 @@ void opt_local_search(string filename, string algorithm, int L, string area_poly
     reform(vertex_iterators,initialPolygon);                         //correct iterator to acquire it.
  
 
-    // int L = stoi(argv[8]); 
-    // int L = 5; 
-    // string area_polygonization = argv[9]; 
-    // string area_polygonization = "-max"; 
+    
     bool max_area_polygonization,min_area_polygonization; 
     string m; 
     if (area_polygonization == "-max") {
@@ -146,15 +148,10 @@ void opt_local_search(string filename, string algorithm, int L, string area_poly
         m = "min"; 
     }
     
-    int total_modifications = 0; 
-
-    cout << endl <<  "Testing for filename: " << filename << endl; 
-
     if (algorithm == "local_search") {
     clock_t start, end;
     start = clock();
     float DA;
-    // string fs(argv[11]); 
     string fs = "0.1"; 
     float threshold = stof(fs);
     if (max_area_polygonization) {
@@ -164,8 +161,11 @@ void opt_local_search(string filename, string algorithm, int L, string area_poly
     }
     vector<pair<Segment_2,vector<Point_2>>> T; 
     vector<float>T_areas; 
+    double total_cutoff = 0.0; 
 
     while(DA >= threshold) {   
+        clock_t func_start, func_end;
+        func_start = clock();
         float initialArea = abs(initialPolygon.area()); 
         vector <Point_2> path;  
         bool has_solution = false; 
@@ -204,6 +204,18 @@ void opt_local_search(string filename, string algorithm, int L, string area_poly
                 }
         
             }
+            func_end = clock();
+            double func_time_taken = double(func_end - func_start) / double(CLOCKS_PER_SEC);
+            func_time_taken *=15;
+            total_cutoff+=func_time_taken;
+            if (total_cutoff >= cut_off) {                          //if optimazition exceeds cutoff time, terminate execution 
+                if (max_area_polygonization){
+                    return 0.0;
+                }else {
+                    return 1.0; 
+                }
+                  
+            }
         }
         if (T_areas.size() != 0) {
             int it; 
@@ -225,23 +237,15 @@ void opt_local_search(string filename, string algorithm, int L, string area_poly
                 potentialPolygon.erase(potentialPolygon.begin() + vertex_iterator);
                 potentialPolygon.insert(potentialPolygon.begin() + eSourceIt , winningPath[i]);
             }
-            
-            if (max_area_polygonization) {
-                initialArea = abs(initialPolygon.area());
-                DA = abs(potentialPolygon.area()) - initialArea;  // recalculate DA
-                initialPolygon = potentialPolygon;                 //new Polygon with the best solution applied to it 
-                reform(vertex_iterators,initialPolygon);            //reform vertex iterators so we get the correct iterator for each vertex for the new Polygon
-                total_modifications++; 
-            }else if (min_area_polygonization) {
-                initialArea = abs(initialPolygon.area());
-                DA = abs(initialPolygon.area()) - abs(potentialPolygon.area());
-                initialPolygon = potentialPolygon; 
-                reform(vertex_iterators,initialPolygon); 
-                total_modifications++; 
-            }
 
-        T.clear(); 
-        T_areas.clear();  
+            initialArea = abs(initialPolygon.area());
+            DA = abs(potentialPolygon.area()) - initialArea;  // recalculate DA
+            initialPolygon = potentialPolygon;                 //new Polygon with the best solution applied to it 
+            reform(vertex_iterators,initialPolygon);            //reform vertex iterators so we get the correct iterator for each vertex for the new Polygon
+            
+
+            T.clear(); 
+            T_areas.clear();  
        }else {
             break;                //if there are no possible solutions to be applied to polygon, break out of the loop and end the proccess 
        }
@@ -259,19 +263,21 @@ void opt_local_search(string filename, string algorithm, int L, string area_poly
     //     cout << edge << endl; 
     // }
 
-    cout << "\nL: " << L << endl; 
-    cout << "Optimized polygonization (2nd assign): " << area_polygonization << endl; 
-    cout << "Algorithm: " << algorithm << endl; 
-    cout << "area_initial: " << initialPolygonArea << endl; 
-    cout << "area: " << abs(initialPolygon.area()) << endl; 
-    cout << "ratio_initial: "<< initialRatio << endl; 
+    // cout << "\nL: " << L << endl; 
+    // cout << "Optimized polygonization (2nd assign): " << area_polygonization << endl; 
+    // cout << "Algorithm: " << algorithm << endl; 
+    // cout << "area_initial: " << initialPolygonArea << endl; 
+    // cout << "area: " << abs(initialPolygon.area()) << endl; 
+    // cout << "ratio_initial: "<< initialRatio << endl; 
 
     Polygon_2 finalCH = calc_convex_hull(initialPolygon); 
     double finalCHarea = abs(finalCH.area()); 
-    cout << "ratio: " << abs(initialPolygon.area())/finalCHarea << endl; 
-    cout << "Construction time: " << fixed << round(time_taken) << setprecision(5);
-    cout << " ms " << endl;    
-    cout << "Initial polygon made with algorithm: " << init_algo << endl; 
+    double ratio = abs(initialPolygon.area()) / finalCHarea; 
+    // cout << "ratio: " << ratio << endl; 
+    // cout << "Construction time: " << fixed << round(time_taken) << setprecision(5);
+    // cout << " ms " << endl;    
+    // cout << "Initial polygon made with algorithm: " << init_algo << endl; 
+    return ratio;
     } else {
 
         clock_t start, end;
@@ -290,7 +296,7 @@ void opt_local_search(string filename, string algorithm, int L, string area_poly
         time_taken *=1000;
 
         Polygon_2 chn;
-        CGAL::convex_hull_2( initialPolygon.begin(), initialPolygon.end(), std::back_inserter(chn));
+        CGAL::convex_hull_2( new_p.begin(), new_p.end(), std::back_inserter(chn));
         
         cout << "Optimized polygonization (2nd assign): " << area_polygonization << endl;
         std::cout << "Algorithm: "<< algorithm << std::endl;
@@ -306,7 +312,53 @@ void opt_local_search(string filename, string algorithm, int L, string area_poly
 }; 
 
 
+void getBestResults(std::vector <std::pair <std::string , int>> & algo_points,  std::vector <std::pair <double, double>> & algo_res , 
+                    std::vector <std::pair <std::pair <std::string , double > , int >> & max_ratio_algo,
+                    std::vector <std::pair <std::pair <std::string , double > , int >> & min_ratio_algo) 
+{
+    string algorithm, algo;
+    int points,new_points;
+    double max_ratio, min_ratio , score_max, score_min;
+    pair <std::string, double> pMax, pMin, new_p_max, new_p_min;
 
+    for (int i = 0; i < algo_points.size(); i++) {
+        algorithm = algo_points[i].first;
+        points = algo_points[i].second; 
+        max_ratio = algo_res[i].first;
+        min_ratio = algo_res[i].second; 
+        for (int j = 0; j < max_ratio_algo.size(); j++) {
+            pMax = max_ratio_algo[j].first; 
+            pMin = min_ratio_algo[j].first; 
+            algo = pMax.first;
+            score_max = pMax.second;
+            score_min = pMin.second; 
+            new_points = max_ratio_algo[j].second; 
+            if ((algorithm == algo) && (points==new_points)) {
+                pMax.second += max_ratio;
+                pMin.second += min_ratio;
+                new_p_max.first = algorithm;
+                new_p_max.second = pMax.second;
+                new_p_min.first = algorithm;
+                new_p_min.second = pMin.second;
+                max_ratio_algo[j].first = new_p_max;
+                min_ratio_algo[j].first = new_p_min;
+            }
+        }
+    }
+
+}
+
+void printResultsBoard(std::vector <std::pair <std::pair <std::string , double > , int >> & max_ratio_algo,
+                    std::vector <std::pair <std::pair <std::string , double > , int >> & min_ratio_algo)
+{
+    for (int i = 0; i < max_ratio_algo.size(); i++) {
+        pair <std::string, double> p;
+        p = max_ratio_algo[i].first; 
+        int points = max_ratio_algo[i].second;
+        cout << p.first << " , " << p.second << " , " << points << endl; 
+    }
+
+}
 
 //simulated annealing 
 
@@ -400,160 +452,227 @@ Polygon_2 simulated_annealing(Polygon_2 P,Polygon_2 ch, int n, string m, string 
     }
 
     if(an=="local"){
+        bool end=false;
         int count=0;
-        while(T>=0 ){
-            Tree tree;
-            Points points,result;
-            bool acc=false; //when this becomes true we don;t make any other iterations
-            while(acc==false){
-                for(auto it = P.begin(); it!= P.end();++it){
-                    tree.insert(*it);
-                }
+            while(T>=0 && end==false){ //change
+                // std::cout <<"1" << std::endl;
+                Tree tree;
+                Points points,result;
+                bool acc=false; //when this becomes true we don;t make any other iterations
                 Point_2 p,q,r,s;
-                random_selection( pl.begin(), pl.end(), 1,std::back_inserter(result));
+                random_selection( pl.begin()+1, pl.end()-1, 1,std::back_inserter(result));
                 q = result[0];
-                int posq = position(vertex_iterators,q);
+                while(acc==false && count<L){   //change
+                    for(auto it = P.begin(); it!= P.end();++it){
+                        tree.insert(*it);
+                    }
+                    // Point_2 p,q,r,s;
+                    // random_selection( pl.begin()+1, pl.end()-1, 1,std::back_inserter(result));
+                    // q = result[0];
+                    int posq = position(vertex_iterators,q);
+                    // std::cout << "q:" <<std::endl;
+                    // std::cout << q <<std::endl;
+                    // std::cout << "posq:" <<std::endl;
+                    // std::cout << posq <<std::endl;
             
-                //finding p,r and s
-                if(posq!=pl.size()&&posq!=0){   
-                    for(int i=0;i<pl.size();i++){
-                        if(i==posq-1){
-                            p=pl[i];
+                    //finding p,r and s
+                    if(posq!=pl.size()&&posq!=0){
+                        // std::cout << "im in 161" <<std::endl;   
+                        for(int i=0;i<pl.size();i++){
+                            if(i==posq-1){
+                                p=pl[i];
+                            }
+                            if(i==posq+1){
+                                r=pl[i];
+                            }
                         }
-                        if(i==posq+1){
-                            r=pl[i];
+                        int posr = position(vertex_iterators,r);
+                        for(int i=0;i<pl.size();i++){
+                            if(i==posr+1){
+                                s=pl[i];
+                            }
                         }
-                    }
-                    int posr = position(vertex_iterators,r);
-                    for(int i=0;i<pl.size();i++){
-                        if(i==posr+1){
-                            s=pl[i];
+                        // std::cout << "p"<< p << std::endl;
+                        // std::cout << "q"<< q << std::endl;
+                        // std::cout << "r"<< r << std::endl;
+                        // std::cout << "s"<< s << std::endl;
+                        //finding the maxx and maxy of this points 
+                        points.push_back(p);
+                        points.push_back(q);
+                        points.push_back(r);
+                        points.push_back(s);
+                        Segment_2 pr = Segment_2(p,r);
+                        Segment_2 qs = Segment_2(q,s);
+                    if(!is_intersected_S(pr,qs)){
+                        // std::cout<< "184" << std::endl;
+                        //range of the rectangle
+                        int minx,miny,maxx,maxy;
+                        minx=points[0].x();
+                        maxx=points[0].x();
+                        miny=points[0].y();
+                        maxy=points[0].y();
+                        for(int i=1; i<points.size(); i++){
+                            if(points[i].x()>maxx) maxx=points[i].x();
+                            if(points[i].x()<minx) minx=points[i].x();
+                            if(points[i].y()>maxy) maxy=points[i].y();
+                            if(points[i].y()<miny) miny=points[i].y(); //change
                         }
-                    }
-                    //finding the maxx and maxy of this points 
-                    points.push_back(p);
-                    points.push_back(q);
-                    points.push_back(r);
-                    points.push_back(s);
 
-               if(!is_intersected_S(Segment_2(p,r),Segment_2(r,s))){
-                     //range of the rectangle
-                    int minx,miny,maxx,maxy;
-                    minx=points[0].x();
-                    maxx=points[0].x();
-                    miny=points[0].y();
-                    maxy=points[0].y();
-                    for(int i=1; i<points.size(); i++){
-                        if(points[i].x()>maxx) maxx=points[i].x();
-                        if(points[i].x()<minx) minx=points[i].x();
-                        if(points[i].y()>maxy) maxy=points[i].y();
-                        if(points[i].y()<miny) maxx=points[i].y();
-                    }
-
-                    //making our box with th minx,miny and maxx,maxy
-                    Fuzzy_iso_box range(Point_2(minx,miny),Point_2(maxx,maxy));
-                    tree.search( std::back_inserter( result ), range);
-                    //points in the box
-                    int sn=0; //segments not intersected
-                    for(int i=0;i<=result.size();i++){
-                        for(const Segment_2& e: pl.edges()){
-                            if(e.source()==result[i]||e.target()==result[i]){
-                                if(!is_intersected_S(e,Segment_2(p,r))&&!is_intersected_S(e,Segment_2(q,s))){
-                                    sn++;
+                        // std::cout << "maxx"<< maxx << std::endl;
+                        // std::cout << "minx"<< minx << std::endl;
+                        // std::cout << "maxy"<< maxy << std::endl;
+                        // std::cout << "miny"<< miny << std::endl;
+                        //making our box with th minx,miny and maxx,maxy
+                        Fuzzy_iso_box approximate_range(Point_2(minx,miny),Point_2(maxx,maxy),0.1);
+                        tree.search( std::back_inserter( result ), approximate_range);
+                        std::cout << "result" << std::endl;
+                        Points clear_result;
+                        for(int i=0; i<result.size(); i++){
+                            int c=0;
+                            for (int j=i+1; j<result.size(); j++){
+                                if(result[i]==result[j]) c++;
+                            }
+                            if(c==0) clear_result.push_back(result[i]);
+                        }
+                        //points in the box
+                        bool sn=false; //segments not intersected
+                        for(int i=0;i<clear_result.size();i++){ //change
+                            for(const Segment_2& e: pl.edges()){
+                                if(e.source()==clear_result[i]||e.target()==clear_result[i]){
+                                    if((is_intersected_S(e,Segment_2(p,r)))==false&&(is_intersected_S(e,Segment_2(q,s))==false)){
+                                        sn = true;
+                                    }
                                 }
                             }
                         }
-                    }
-                    if(sn==result.size()){  //this means->no intersections
-                        int posr=position(vertex_iterators,r);
-                        int posq=position(vertex_iterators,q);
-                        pl.insert(pl.begin()+posr,q);
-                        pl.insert(pl.begin()+posq,r);
-                        change_after(vertex_iterators,pl);
-                        acc=true;
-                    }else{
-                        L++;
-                    }
-                }
-            }
-        }
-        T = T -1/L;
-        Polygon_2 ch1;
-        CGAL::convex_hull_2( pl.begin(), pl.end(), std::back_inserter(ch1) );
-        double E1= n*(pl.area()/ch1.area());
-        double de=E-E1;
-        if(de<0){
-            return pl;
-        }else{
-            double R=(float)rand() / (float)RAND_MAX; //generate r from 0->1
-            if(exp(-de/T)>R) {  //metropolis
-                return pl;
-            }else{
-               Polygon_2 p_end = simulated_annealing(pl,ch1,n,m,an,L);
-            }
-       }
-     }
-    }else if (an=="global"){
-        int L=1;
-        while(T>=0){
-            bool acc=false;
-            while(acc==false){
-                Points points;
-                Point_2 p,q,r,s,t;
-                random_selection( pl.begin(), pl.end(), 2,std::back_inserter(points));
-                q = points[0];
-                s = points[1];
-                for(const Segment_2& e: pl.edges()){ //if qs is a polygon segment we are starting all over again
-                    if(Segment_2(q,s) == e){
-                        acc = true;
-                    }
-                }
-                int posq = position(vertex_iterators,q);
-                int poss = position(vertex_iterators,s);
-                //finding p,r and q
-                if(posq==0|| posq==pl.size()||poss==pl.size()) acc = true; //if q is at the first or at the end of pl we can;t find the p,r and if s is in the end we can't find t 
-                if(acc==false){
-                    for(int i=0;i<pl.size();i++){
-                        if(i==posq-1){
-                            p=pl[i];
-                        }
-                        if(i==posq+1){
-                            r=pl[i];
-                        }
-                        if(i==poss+1){
-                            t=pl[i];
-                        }
-                    }
-                    //checking if pr intersects sq or tq or any other segment, if its not we erase q from its position and we inserted it after s
-                    if(!is_intersected_S(Segment_2(r,p),Segment_2(s,q))&&!is_intersected_S(Segment_2(r,p),Segment_2(t,q))){
-                        if(!is_intersected_P(Segment_2(r,p),pl)){
-                            pl.erase(pl.begin()+posq);
+                        std::cout<<"sn:"<<sn<<std::endl;
+                        std::cout<<"result.s"<<clear_result.size()-1<<std::endl;
+                        if(sn==true){  //this means->no intersections
+                            std::cout <<"im sn"<<std::endl;
+                            int posr=position(vertex_iterators,r);
+                            int posq=position(vertex_iterators,q);
+                            pl.insert(pl.begin()+posr,q);
                             pl.insert(pl.begin()+posq,r);
-                            pl.insert(pl.begin()+poss+1,q);
-                            acc == true;
+                            change_after(vertex_iterators,pl);
+                            acc = true;
+                            // if(pl.is_simple()){
+                            //     std::cout <<"im simple"<<std::endl;
+                            //     change_after(vertex_iterators,pl);
+                            //     acc=true;
+                            // }else{
+                            //     pl.erase(pl.begin()+posr);
+                            //     pl.erase(pl.begin()+posq);
+                            //     change_after(vertex_iterators,pl);
+                            //     // Point_2 p,q,r,s;
+                                // random_selection( pl.begin()+1, pl.end()-1, 1,std::back_inserter(result));
+                                // q = result[0];
+                            //     // std::cout <<"im in count"<<std::endl;
+                            //     // count++;
+                            // }
+                            
                         }
-                    }else{
-                        L++;
+                        // random_selection( pl.begin()+1, pl.end()-1, 1,std::back_inserter(result));
+                        // q = result[0];
                     }
+                }
+                random_selection( pl.begin()+1, pl.end()-1, 1,std::back_inserter(result));
+                q = result[0];
+                count++;
             }
-        }
-        T = T -1/L;
-        Polygon_2 ch1;
-        CGAL::convex_hull_2( pl.begin(), pl.end(), std::back_inserter(ch1) );
-        double E1= n*(pl.area()/ch1.area());
-        double de=E-E1;
-        if(de<0){
-            return pl;
-        }else{
-            double R=(float)rand() / (float)RAND_MAX; //generate r from 0->1
-            if(exp(-de/T)>R) {  //metropolis
-                return pl;
+            T = T-1/L;
+            Polygon_2 ch1;
+            CGAL::convex_hull_2( pl.begin(), pl.end(), std::back_inserter(ch1) );
+            double E1= n*(abs(pl.area())/abs(ch1.area()));
+            double de=E-E1;
+            if(de<0){
+                end = true;
+                break;
             }else{
-               Polygon_2 p_end = simulated_annealing(pl,ch1,n,m,an,0);
+                double R=(float)rand() / (float)RAND_MAX; //generate r from 0->1
+                if(exp(-de/T)>R) {  //metropolis
+                    end = true;
+                    break;
+                }
+            }  
+        }
+    return pl;
+    }
+    else if (an=="global"){
+        bool end=false;
+        // int count=0;
+        while (end==false){
+            int L=1;
+            while(T>=0 && L<10000){
+                for(auto it = P.begin(); it!= P.end();++it){
+                    pl.push_back(*it);  //pl is helping polygon where we initialize it with the elements of the P and make all the changes in it
+                }
+
+                std::vector<pair<Point_2,int>> vertex_iterators;
+                for(int i=0; i<P.size(); i++){  //iterators for the polygonic line
+                    vertex_iterators.push_back(make_pair(P[i],i));
+                }
+                bool acc=false;
+                while(acc==false){
+                    Points points;
+                    Point_2 p,q,r,s,t;
+                    random_selection( pl.begin(), pl.end(), 2,std::back_inserter(points));
+                    q = points[0];
+                    s = points[1];
+                    for(const Segment_2& e: pl.edges()){ //if qs is a polygon segment we are starting all over again
+                        if(Segment_2(q,s) == e){
+                            acc = true;
+                        }
+                    }
+                    int posq = position(vertex_iterators,q);
+                    int poss = position(vertex_iterators,s);
+                    //finding p,r and q
+                    if(posq==0|| posq==pl.size()||poss==pl.size()) acc = true; //if q is at the first or at the end of pl we can;t find the p,r and if s is in the end we can't find t 
+                        if(acc==false){
+                        for(int i=0;i<pl.size();i++){
+                            if(i==posq-1){
+                                p=pl[i];
+                            }
+                            if(i==posq+1){
+                                r=pl[i];
+                            }
+                            if(i==poss+1){
+                                t=pl[i];
+                            }
+                        }
+                    //checking if pr intersects sq or tq or any other segment, if its not we erase q from its position and we inserted it after s
+                        if(!is_intersected_S(Segment_2(r,p),Segment_2(s,q))&&!is_intersected_S(Segment_2(r,p),Segment_2(t,q))){
+                            if(!is_intersected_P(Segment_2(r,p),pl)){
+                                //pl.erase(pl.begin()+posq);
+                                pl.insert(pl.begin()+posq,r);
+                                pl.insert(pl.begin()+poss+1,q);
+                                acc == true;
+                            }
+                        }else{
+                            L++;
+                        }
+                }
             }
+            T = T -1/L;
+            Polygon_2 ch1;
+            CGAL::convex_hull_2( pl.begin(), pl.end(), std::back_inserter(ch1) );
+            double E1= n*(pl.area()/ch1.area());
+            double de=E-E1;
+            if(de<0){
+                end = true;
+                break;
+            }else{
+                double R=(float)rand() / (float)RAND_MAX; //generate r from 0->1
+                if(exp(-de/T)>R) {  //metropolis
+                    end = true;
+                    break;
+                }
+            }  
+        
         }
     }
-   }else if (an=="subdivisor"){
+    return pl;
+   }
+   else if (an=="subdivisor"){
     //sorting our polygon
        std::sort(pl.begin(), pl.end(), howtoSort);
             srand((unsigned)time(0));
