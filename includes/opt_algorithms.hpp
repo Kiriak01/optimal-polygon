@@ -99,11 +99,18 @@ Segment_2 findNextEdge(Point_2,Polygon_2);
 void printPolygonEdges(Polygon_2); 
 bool feasibleSolution(float,float,int,std::vector<std::pair<Segment_2,std::vector<Point_2>>>&, std::vector<float>&, std::vector<Point_2>, bool, bool, Segment_2);
 Polygon_2 getInitialPolygon(std::string , int , std::string , std::string ); 
-double opt_local_search(std::string, std::string, int , std::string , std::string , std::string, int , std::string, std::string, double );
+double optimize_polygon(std::string, std::string, int , std::string , std::string , std::string, int , std::string, std::string, double );
 int getSumPoints(std::string); 
 void getBestResults(std::vector <std::pair <std::string , int>> &, std::vector <std::pair <double, double>> & , 
-                    std::vector <std::pair <std::pair <std::string , double > , int >> &, std::vector <std::pair <std::pair <std::string , double > , int >> &);
+                    std::vector <std::pair <std::pair <std::string , double > , int >> &, std::vector <std::pair <std::pair <std::string , double > , int >> & ,
+                    std::vector<std::string>); 
 void printResultsBoard(std::vector <std::pair <std::pair <std::string , double > , int >> &, std::vector <std::pair <std::pair <std::string , double > , int >> &); 
+void cleanResultsVector(std::vector <std::pair <std::pair <std::string , double > , int >> &, std::vector<std::string>); 
+bool sortbysec(const std::pair<std::pair<std::string,double>, int> &, const std::pair<std::pair<std::string,double>, int>&);
+double findBoundMax(std::vector <std::pair <std::pair <std::string, double>, int>> & , int, std::string);
+double findBoundMin(std::vector <std::pair <std::pair <std::string, double>, int>> & , int, std::string);
+void createBoundVectors(std::vector <std::pair <std::string , int>> &, std::vector <std::pair <double, double>> &, 
+                        std::vector <std::pair <std::pair <std::string, double>, int>> & , std::vector <std::pair <std::pair <std::string, double>, int>> & );
 
 //for simulated annealing 
 Polygon_2 simulated_annealing(Polygon_2 ,Polygon_2 , int , std::string , std::string , int);
