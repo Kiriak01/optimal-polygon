@@ -373,7 +373,7 @@ void cleanResultsVector(std::vector <std::pair <std::pair <std::string , double 
 }
 
 double findMaxScore(std::vector <std::pair <std::pair <std::string , double > , int >> & max_ratio_algo, int points, string algorithm) {
-    static double max = 0.0;
+    double max = 0.0;
     for (int i = 0; i < max_ratio_algo.size(); i++) {
         pair <std::string , double> p;
         p = max_ratio_algo[i].first; 
@@ -390,7 +390,7 @@ double findMaxScore(std::vector <std::pair <std::pair <std::string , double > , 
 }
 
 double findMinScore(std::vector <std::pair <std::pair <std::string , double > , int >> & min_ratio_algo, int points, string algorithm) {
-    static double min = 100.0;
+    double min = 100.0;
     for (int i = 0; i < min_ratio_algo.size(); i++) {
         pair <std::string , double> p;
         p = min_ratio_algo[i].first; 

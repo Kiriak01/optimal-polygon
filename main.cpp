@@ -39,8 +39,8 @@ int main(int argc, char* argv[]) {
 
 
     vector< pair <std::string, std::string>> algorithms = {
-        {"local_search", "incremental"} , {"local_search", "convexhull"},
-        {"simulated_annealing", "incremental"} , // {"simulated_annealing", "convexhull"}   too slow 
+        {"local_search", "incremental"} ,// {"local_search", "convexhull"},
+       // {"simulated_annealing", "incremental"} , // {"simulated_annealing", "convexhull"}   too slow 
     };
 
     vector <std::string> annealing_step = { {"local"}, {"global"}, };  
