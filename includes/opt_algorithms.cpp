@@ -257,29 +257,11 @@ double optimize_polygon(string filename, string algorithm, int L, string area_po
     double time_taken = double(end - start) / double(CLOCKS_PER_SEC);
     time_taken *=1000;
 
-
-    // for(const Point_2& vertex: initialPolygon.vertices()) {
-    //     cout << vertex << endl; 
-    // }
-    // for(const Segment_2& edge: initialPolygon.edges()) {
-    //     cout << edge << endl; 
-    // }
-
-    // cout << "\nL: " << L << endl; 
-    // cout << "Optimized polygonization (2nd assign): " << area_polygonization << endl; 
-    // cout << "Algorithm: " << algorithm << endl; 
-    // cout << "area_initial: " << initialPolygonArea << endl; 
-    // cout << "area: " << abs(initialPolygon.area()) << endl; 
-    // cout << "ratio_initial: "<< initialRatio << endl; 
-
     Polygon_2 finalCH = calc_convex_hull(initialPolygon); 
     double finalCHarea = abs(finalCH.area()); 
     double ratio = abs(initialPolygon.area()) / finalCHarea; 
-    // cout << "ratio: " << ratio << endl; 
-    // cout << "Construction time: " << fixed << round(time_taken) << setprecision(5);
-    // cout << " ms " << endl;    
-    // cout << "Initial polygon made with algorithm: " << init_algo << endl; 
     return ratio;
+
     } else {
 
         clock_t start, end;
@@ -291,25 +273,29 @@ double optimize_polygon(string filename, string algorithm, int L, string area_po
         int n=initialPolygon.size();
         string m = area_polygonization;
         string ann = annealing; 
-        Polygon_2 new_p = simulated_annealing(initialPolygon,ch,n,m,ann,L); 
+        bool exceed_cutoff = false; 
+        Polygon_2 new_p = simulated_annealing(initialPolygon,ch,n,m,ann,L,cut_off,exceed_cutoff);  
         end = clock();
+
+        
         
         double time_taken = double(end - start) / double(CLOCKS_PER_SEC);
         time_taken *=1000;
 
         Polygon_2 chn;
         CGAL::convex_hull_2( new_p.begin(), new_p.end(), std::back_inserter(chn));
-        
-        // cout << "Optimized polygonization (2nd assign): " << area_polygonization << endl;
-        // std::cout << "Algorithm: "<< algorithm << std::endl;
-        // std::cout << "area initial: " << abs(initialPolygon.area()) << std::endl;
-        // std::cout << "area: " << abs(new_p.area()) << std::endl;
-        // std::cout << "ratio_initial: " << abs(initialPolygon.area())/abs(ch.area()) << std::endl;
-        double ratio = abs(new_p.area())/abs(chn.area());
-        // std::cout << "ratio: " << ratio << std::endl;
-        // cout << "Construction time: " << fixed << round(time_taken) << setprecision(5);
-        // cout << " ms " << endl; 
-        // cout << "Initial polygon made with algorithm: " << init_algo << endl; 
+    
+        double ratio; 
+        if (exceed_cutoff == true) {
+            if (m=="-max") {
+                ratio = 0.0;
+            }else {
+                ratio = 1.0; 
+            }
+        }else {
+            ratio = abs(new_p.area())/abs(chn.area());
+        }
+
         return ratio; 
 
     }
@@ -386,8 +372,43 @@ void cleanResultsVector(std::vector <std::pair <std::pair <std::string , double 
     max_ratio_algo = new_max_ratio_algo; 
 }
 
+double findMaxScore(std::vector <std::pair <std::pair <std::string , double > , int >> & max_ratio_algo, int points, string algorithm) {
+    static double max = 0.0;
+    for (int i = 0; i < max_ratio_algo.size(); i++) {
+        pair <std::string , double> p;
+        p = max_ratio_algo[i].first; 
+        string algo = p.first;
+        double score = p.second; 
+        int filepoints = max_ratio_algo[i].second;
+        if ((algo == algorithm) && (points == filepoints)) {
+            if (score > max) {
+                max = score; 
+            }
+        }
+    }
+    return max; 
+}
+
+double findMinScore(std::vector <std::pair <std::pair <std::string , double > , int >> & min_ratio_algo, int points, string algorithm) {
+    static double min = 100.0;
+    for (int i = 0; i < min_ratio_algo.size(); i++) {
+        pair <std::string , double> p;
+        p = min_ratio_algo[i].first; 
+        string algo = p.first;
+        double score = p.second; 
+        int filepoints = min_ratio_algo[i].second;
+        if ((algo == algorithm) && (points == filepoints)) {
+            if (score < min) {
+                min = score; 
+            }
+        }
+    }
+    return min; 
+}
+
 void printResultsBoard(std::vector <std::pair <std::pair <std::string , double > , int >> & max_ratio_algo,
-                    std::vector <std::pair <std::pair <std::string , double > , int >> & min_ratio_algo)
+                    std::vector <std::pair <std::pair <std::string , double > , int >> & min_ratio_algo, std::vector<std::string> files,
+                    std::vector <std::pair <std::pair <std::string, double>, int>> & MAX_bounds, std::vector <std::pair <std::pair <std::string, double>, int>> & MIN_bounds)
 {   
     
     sort(max_ratio_algo.begin(), max_ratio_algo.end(), sortbysec);
@@ -395,10 +416,10 @@ void printResultsBoard(std::vector <std::pair <std::pair <std::string , double >
     string algo;
     double score_max; 
     vector <string> algo_results; 
-
+    vector<int> algo_points; 
     std::vector<string>::iterator it;
+    std::vector<int>::iterator points_it;
 
-    
     for (int i = 0; i < max_ratio_algo.size(); i++) {
         pair <std::string, double> p;
         p = max_ratio_algo[i].first; 
@@ -413,21 +434,40 @@ void printResultsBoard(std::vector <std::pair <std::pair <std::string , double >
             algo_results.push_back(algo); 
         }
     }
-    
-    // cout << "\t||\t";
-    // for (int i = 0; i < algo_results.size(); i++) {
-    //     cout << algo_results[i];
-    //     cout << "\t";
-    //     cout << "||";
-    //     cout << "\t";
 
-    // }
-    // cout << endl; 
-    // cout << "Size \t"; 
-    // cout << "||"; 
-    // for (int i = 0; i < algo_results.size(); i++) {
-    //     cout << "min score | max_score | min_bound | max_bound\t";   
-    // }
+    for (int i = 0; i < files.size(); i++) {
+        int fp = getSumPoints(files[i]); 
+        points_it = find(algo_points.begin(), algo_points.end(), fp);
+        if (points_it != algo_points.end()) { 
+            continue;
+        }
+        else { 
+            algo_points.push_back(fp); 
+        }
+    }
+    sort(algo_points.begin(), algo_points.end());
+    
+    
+    int filepoints;
+    double scoreMax,scoreMin,boundMax,boundMin;
+    // cout << "\t||";
+    for (int i = 0; i < algo_results.size(); i++) {
+        cout << "\t\t";
+        cout << algo_results[i];
+        cout << endl; 
+        cout << "Size \t"; 
+        cout << "||"; 
+        cout << "min score | max_score | min_bound | max_bound ||" << endl;   
+        for (int j = 0; j < algo_points.size(); j++) {
+            scoreMax = findMaxScore(max_ratio_algo, algo_points[j], algo_results[i]); 
+            scoreMin = findMinScore(min_ratio_algo, algo_points[j], algo_results[i]); 
+            boundMax = findBoundMax(MAX_bounds, algo_points[j], algo_results[i]); 
+            boundMin = findBoundMin(MIN_bounds, algo_points[j], algo_results[i]); 
+            cout << algo_points[j] << "\t||" << scoreMin << "   |  " << scoreMax << "  |  " << boundMin << " | " << boundMax << endl; 
+        }
+        cout << endl; 
+    }
+    
 }
 
 bool sortbysec(const std::pair<std::pair<std::string,double>, int> &a,
@@ -438,12 +478,11 @@ bool sortbysec(const std::pair<std::pair<std::string,double>, int> &a,
 
 
 double findBoundMax(std::vector <std::pair <std::pair <std::string, double>, int>> & MAX_bounds, int points, string algorithm) {
-    static double max = 1.0;
+    double max = 1.0;
     for (int i = 0; i < MAX_bounds.size(); i++) {
         pair <std::string , double> p;
         p = MAX_bounds[i].first; 
         if ((p.first == algorithm) && (MAX_bounds[i].second == points)) {
-            cout << "mphka " << max << ", " << p.second << endl; 
             if (p.second < max) {
                 max = p.second; 
             }
@@ -453,7 +492,7 @@ double findBoundMax(std::vector <std::pair <std::pair <std::string, double>, int
 }
 
 double findBoundMin(std::vector <std::pair <std::pair <std::string, double>, int>> & MIN_bounds, int points, string algorithm) {
-    static double min = 0.0;
+    double min = 0.0;
     for (int i = 0; i < MIN_bounds.size(); i++) {
         pair <std::string , double> p;
         p = MIN_bounds[i].first; 
@@ -469,9 +508,7 @@ double findBoundMin(std::vector <std::pair <std::pair <std::string, double>, int
 void createBoundVectors(std::vector <std::pair <std::string , int>> & algo_points, std::vector <std::pair <double, double>> & algo_res, 
                         std::vector <std::pair <std::pair <std::string, double>, int>> & MAX_bounds, std::vector <std::pair <std::pair <std::string, double>, int>> & MIN_bounds)
 {
-
     for (int i = 0; i < algo_points.size(); i++) {
-        cout << algo_points[i].first << "," << algo_points[i].second << "," << algo_res[i].first << "," << algo_res[i].second << endl;  
         for (int j = 0; j < algo_points.size(); j++) {
             if ((algo_points[i].first == algo_points[j].first) && (algo_points[i].second == algo_points[j].second)) {
                 if (algo_res[j].first < algo_res[i].first) {
@@ -491,7 +528,6 @@ void createBoundVectors(std::vector <std::pair <std::string , int>> & algo_point
             }
         }
     }
-
     sort(MAX_bounds.begin(), MAX_bounds.end()); 
     sort(MIN_bounds.begin(), MIN_bounds.end()); 
 }
@@ -567,7 +603,7 @@ Point_2 find_minx(Polygon_2 p){
 }
 
 //function to compute the new polygon by simulated annealing
-Polygon_2 simulated_annealing(Polygon_2 P,Polygon_2 ch, int n, string m, string an,int L){
+Polygon_2 simulated_annealing(Polygon_2 P,Polygon_2 ch, int n, string m, string an,int L, double cut_off, bool & exceed_cutoff){
     double T=1,E;
     Polygon_2 pl, max_polygon, min_polygon;
 
@@ -596,7 +632,10 @@ Polygon_2 simulated_annealing(Polygon_2 P,Polygon_2 ch, int n, string m, string 
     if(an=="local"){
         bool end=false;
         int count=0;
+        static double total_cutoff = 0.0;
         while(T>=0 && end==false){ 
+            clock_t func_start, func_end;
+            func_start = clock();
             Tree tree;
             Points points,result;
             bool acc=false; 
@@ -707,6 +746,19 @@ Polygon_2 simulated_annealing(Polygon_2 P,Polygon_2 ch, int n, string m, string 
                 }
             }
             count++;
+            func_end = clock();
+            double func_time_taken = double(func_end - func_start) / double(CLOCKS_PER_SEC);
+            func_time_taken *=1000;
+            total_cutoff+=func_time_taken;
+            if (total_cutoff >= cut_off) {                          //if optimazition exceeds cutoff time, terminate execution 
+                exceed_cutoff == true; 
+                if (m=="-max"){
+                    return max_polygon;
+                }else {
+                    return min_polygon; 
+                }
+                  
+            }
         }
         T = T-1/L;
         Polygon_2 ch1;
@@ -731,7 +783,10 @@ Polygon_2 simulated_annealing(Polygon_2 P,Polygon_2 ch, int n, string m, string 
         }
     }else if (an=="global"){
         bool end=false;
+        static double total_cutoff = 0.0;
         while(T>=0 && end ==false){
+            clock_t func_start, func_end;
+            func_start = clock();
             int count=0;
             bool acc=false;
             int random_num=0;
@@ -808,6 +863,19 @@ Polygon_2 simulated_annealing(Polygon_2 P,Polygon_2 ch, int n, string m, string 
                     s = result[random_num++];
                     count++;
             }
+            func_end = clock();
+            double func_time_taken = double(func_end - func_start) / double(CLOCKS_PER_SEC);
+            func_time_taken *=1000;
+            total_cutoff+=func_time_taken;
+            if (total_cutoff >= cut_off) {                          //if optimazition exceeds cutoff time, terminate execution 
+                exceed_cutoff == true; 
+                if (m=="-max"){
+                    return max_polygon;
+                }else {
+                    return min_polygon; 
+                }
+                  
+            }
         }
         T = T -1/L;
         Polygon_2 ch1;
@@ -834,7 +902,10 @@ Polygon_2 simulated_annealing(Polygon_2 P,Polygon_2 ch, int n, string m, string 
     //sorting our polygon
     int count=0;
     bool acc=false;
+    static double total_cutoff = 0.0;
     while(acc==false && count <L){
+        clock_t func_start, func_end;
+        func_start = clock();
         std::sort(pl.begin(), pl.end(), howtoSort);
         srand((unsigned)time(0));
         int M=rand()%100+10;
@@ -860,6 +931,7 @@ Polygon_2 simulated_annealing(Polygon_2 P,Polygon_2 ch, int n, string m, string 
                 if(j==M-1 && a<pl.size()){  //vazoume ta upoloipa simeia sto teleutaio set
                     for(int l=a+1;l<pl.size(); l++){
                         pol[++j] = pl[l];
+
                     }
                 }
             }
@@ -907,6 +979,14 @@ Polygon_2 simulated_annealing(Polygon_2 P,Polygon_2 ch, int n, string m, string 
             }
         }
         count++;
+        func_end = clock();
+        double func_time_taken = double(func_end - func_start) / double(CLOCKS_PER_SEC);
+        func_time_taken *=1000;
+        total_cutoff+=func_time_taken;
+        cout << "cutoff vs total cutoff " << cut_off << " , " << total_cutoff << endl; 
+        if (total_cutoff >= cut_off) {                          //if optimazition exceeds cutoff time, terminate execution 
+            return pl; 
+        }
     }
     return pl;
     }else{

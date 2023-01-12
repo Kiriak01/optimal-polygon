@@ -40,10 +40,10 @@ int main(int argc, char* argv[]) {
 
     vector< pair <std::string, std::string>> algorithms = {
         {"local_search", "incremental"} , {"local_search", "convexhull"},
-        {"simulated_annealing", "incremental"} //, {"simulated_annealing", "convexhull"}  sim an with ch too slow for now uncomment later 
+        {"simulated_annealing", "incremental"} , // {"simulated_annealing", "convexhull"}   too slow 
     };
 
-    vector <std::string> annealing_step = { {"local"}, {"global"}, {"subdivisor"}};   //ta prostetoyme sto for otan valoyme cutoff ston annealing 
+    vector <std::string> annealing_step = { {"local"}, {"global"}, };  
 
     vector <std::string> algo_results;
     double cut_off;
@@ -53,9 +53,6 @@ int main(int argc, char* argv[]) {
     vector <pair <double, double>> algo_res; 
     string opt_algorithm, init_algorithm, total_algorithm; 
     
-    
-    // vector <pair <pair <std::string , double > , int >> max_bound; 
-    // vector <pair <pair <std::string , double > , int >> min_bound; 
     vector<double> test_max_bound; 
     pair <std::string, double> testPmax, pMax, pMin;
     int points; 
@@ -69,9 +66,10 @@ int main(int argc, char* argv[]) {
         opt_algorithm = algorithms[i].first;
         init_algorithm = algorithms[i].second; 
         total_algorithm = opt_algorithm + "-" + init_algorithm; 
+        cout << total_algorithm << endl; 
         int L; 
         if (opt_algorithm == "local_search"){
-            L = 1;
+            L = 2;
         }else {
             L = 50;  
         }
@@ -81,13 +79,13 @@ int main(int argc, char* argv[]) {
             points_amount = getSumPoints(files[j]); 
             cut_off  = points_amount * 500; //(ms)
             max_ratio = optimize_polygon(files[j], opt_algorithm, L, "-max", "0.1",
-                                            init_algorithm,  2, "2b", "local", cut_off); 
+                                                init_algorithm,  3, "2b", "local", cut_off); 
             min_ratio = optimize_polygon(files[j], opt_algorithm, L, "-min", "0.1",
-                                           init_algorithm,  2, "2b", "local", cut_off); 
-        
+                                            init_algorithm,  2, "2b", "local", cut_off); 
+            
             algo_points.push_back(make_pair(total_algorithm,points_amount));
             algo_res.push_back(make_pair(max_ratio,min_ratio));
-        }
+        }    
     }
 
     vector <pair <pair <std::string, double>, int>> MAX_bounds; 
@@ -112,8 +110,8 @@ int main(int argc, char* argv[]) {
 
     getBestResults(algo_points,algo_res,max_ratio_algo,min_ratio_algo,files); 
 
-    printResultsBoard(max_ratio_algo,min_ratio_algo); 
-    
+    printResultsBoard(max_ratio_algo,min_ratio_algo, files, MAX_bounds, MIN_bounds); 
 
+    
     return 0; 
 }
